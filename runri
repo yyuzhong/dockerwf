@@ -1,0 +1,26 @@
+#/bin/bash
+
+
+if docker images | grep "myrimage" > /dev/null
+then
+    echo "Image already exists"
+else
+    docker pull yyuzhong/myrimage:latest
+fi
+
+WORKDIR=$( cd $(dirname $0) ; pwd -P)
+
+docker ps -a | grep myrdaemon | awk '{print $1}' | xargs docker stop
+docker ps -a | grep myrdaemon | awk '{print $1}' | xargs docker rm
+
+#docker run --name myrdaemon -v "$WORKDIR/rscript":/tmp/rscript  -v "$WORKDIR/rdata":/tmp/rdata -w /tmp/rstage --privileged=true yyuzhong/myrimage:latest "rsync -av --exclude='.*' /tmp/rscript/ /tmp/rstage/; rsync -av --exclude='.*' /tmp/rdata /tmp/stage; R"
+
+docker run -d  --name myrdaemon -v "$WORKDIR/rscript":/tmp/rscript  -v "$WORKDIR/rdata":/tmp/rdata -w /tmp/rstage --privileged=true yyuzhong/myrimage:latest tail -f /dev/null
+
+docker exec -it myrdaemon rsync -av --exclude=".*" /tmp/rscript/ /tmp/rstage/
+docker exec -it myrdaemon rsync -av --exclude=".*" /tmp/rdata/ /tmp/rstage/
+
+docker exec -it myrdaemon bash
+
+docker ps -a | grep myrdaemon | awk '{print $1}' | xargs docker stop
+docker ps -a | grep myrdaemon | awk '{print $1}' | xargs docker rm
