@@ -1,0 +1,8 @@
+
+The goal of this project is try to setup an easy-to-use R development platform.
+
+"runri" will download R image and run it in shell mode.
+
+"runrb" will run R script in batch mode.
+
+

@@ -10,16 +10,16 @@ fi
 
 WORKDIR=$( cd $(dirname $0) ; pwd -P)
 
-docker ps -a | grep myrdaemon | awk '{print $1}' | xargs docker stop
-docker ps -a | grep myrdaemon | awk '{print $1}' | xargs docker rm
+#docker ps -a | grep myrdaemon | awk '{print $1}' | xargs docker stop
+#docker ps -a | grep myrdaemon | awk '{print $1}' | xargs docker rm
 
 
-docker run -d  --name myrdaemon -v "$WORKDIR/rscript":/tmp/rscript  -v "$WORKDIR/rdata":/tmp/rdata -w /tmp/rstage --privileged=true yyuzhong/myrimage:latest tail -f /dev/null
+docker run -d  --name myrdaemon -v "$WORKDIR":/tmp/rstage -w /tmp/rstage --privileged=true yyuzhong/myrimage:latest tail -f /dev/null
 
-docker exec -it myrdaemon rsync -av --exclude=".*" /tmp/rscript/ /tmp/rstage/
-docker exec -it myrdaemon rsync -av --exclude=".*" /tmp/rdata/ /tmp/rstage/
+#docker exec -it myrdaemon rsync -av --exclude=".*" /tmp/rscript/ /tmp/rstage/
+#docker exec -it myrdaemon rsync -av --exclude=".*" /tmp/rdata/ /tmp/rstage/
 
-docker exec -it myrdaemon Rscript test.R
+docker exec -it myrdaemon Rscript ./rscript/test.R -i rdata/x.data -o output.data -p 100
 
 docker ps -a | grep myrdaemon | awk '{print $1}' | xargs docker stop
 docker ps -a | grep myrdaemon | awk '{print $1}' | xargs docker rm
