@@ -7,8 +7,8 @@ opt = getopt(matrix(c(
 ),ncol=4,byrow=TRUE));
 
 if(!is.null(opt$help)) {
-    self = commandArgs()[1];
-    cat(paste("Usage: ",self, "[-[-input|i] <input file>] [-[-output|o] <output file>] [-[-parameter|p] <parameter>]\n",sep=""));
+    self = commandArgs()[4];
+    cat(paste("Usage: RScript <script file>", " [-[-input|i] <input file>] [-[-output|o] <output file>] [-[-parameter|p] <parameter>]\n",sep=""));
 
 }
 cat(opt$input);
