@@ -1,0 +1,34 @@
+#/bin/bash
+
+#usage: SubmitRImage imagename username password email. 
+
+if [ "$#" -ne 4 ]; then
+    echo "Usage: $0 imagename username password email" >&2
+    exit 1
+fi
+
+if docker ps | grep "myrdaemon" > /dev/null
+then
+    echo "Container already exists"
+else
+    echo "No Container, Please call RunRScript or RunRShell at first"
+    exit 2
+fi
+
+imagename=$1
+
+subname=`echo $imagename | cut -d':' -f 1` #find the main name yyuzhong/myrimage
+echo $subname
+
+docker images | grep $subname | awk '{print $3}' | xargs docker rmi -f
+#docker rmi -f "$imagename"
+
+docker exec -it myrdaemon rsync -av --exclude=".*" /tmp/rstage /home/workspace/
+
+docker commit myrdaemon "$imagename"
+
+docker login -u $2 -p $3 -e $4
+docker push "$imagename"
+
+docker ps -a | grep myrdaemon | awk '{print $1}' | xargs docker stop
+docker ps -a | grep myrdaemon | awk '{print $1}' | xargs docker rm

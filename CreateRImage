@@ -1,0 +1,27 @@
+#/bin/bash
+
+#usage: CreateRImage imagename username password email. 
+
+if [ "$#" -ne 4 ]; then
+    echo "Usage: $0 imagename username password email" >&2
+    exit 1
+fi
+
+SAVEDIR=$PWD
+
+WORKDIR=$( cd $(dirname $0) ; pwd -P)
+cd $WORKDIR
+
+imagename=$1
+
+subname=`echo $imagename | cut -d':' -f 1` #find the main name yyuzhong/myrimage
+echo $subname
+
+docker images | grep $subname | awk '{print $3}' | xargs docker rmi -f
+
+docker build -f rimage/Dockerfile -t yyuzhong/myrimage:latest .
+
+docker login -u $2 -p $3 -e $4
+docker push "$imagename"
+
+cd $SAVEDIR
