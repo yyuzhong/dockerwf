@@ -17,13 +17,13 @@ fi
 
 imagename=$1
 
-subname=`echo $imagename | cut -d':' -f 1` #find the main name yyuzhong/myrimage
+subname=`echo $imagename | cut -d':' -f 1` #find the main name yyuzhong/xxxx
 echo $subname
 
 docker images | grep $subname | awk '{print $3}' | xargs docker rmi -f
 #docker rmi -f "$imagename"
 
-docker exec -it myrdaemon rsync -av --exclude=".*" /tmp/rstage /home/workspace/
+docker exec -it myrdaemon rsync -av --exclude=".*" /tmp/rstage/ /home/workspace/
 
 docker commit myrdaemon "$imagename"
 

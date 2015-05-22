@@ -1,0 +1,4 @@
+#/bin/bash
+
+WORKDIR=$PWD/utils
+export PATH=$PATH:$WORKDIR
