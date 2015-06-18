@@ -1,0 +1,15 @@
+#/bin/bash
+
+. ./rimage.ini
+
+imagename=$myrimage
+
+if [ ! -z "$1" -a "$1" != " " ]; then
+        imagename=$1
+        sed -i "s#^myrimage=.*#myrimage=$imagename#g" ./rimage.ini
+fi
+
+echo $imagename
+
+docker pull $imagename
+

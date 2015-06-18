@@ -1,19 +1,29 @@
 #/bin/bash
 
+SAVEDIR=$PWD
+
+WORKDIR=$( cd $(dirname $0) ; pwd -P)
+cd $WORKDIR
+
+. ./rimage.ini
+
 # Usage: RunRScript script arguments
-if docker images | grep "yyuzhong/r-base" > /dev/null
+subname=`echo $myrimage| cut -d':' -f 1` #find the main name yyuzhong/xxxx
+echo $myrimage
+echo $subname
+if docker images | grep "$subname" > /dev/null
 then
     echo "Image already exists"
 else
-    docker pull yyuzhong/r-base:latest
+    docker pull $myrimage
 fi
 
-WORKDIR=$( cd $(dirname $0) ; pwd -P)
 
 docker ps -a | grep myrdaemon | awk '{print $1}' | xargs docker stop
 docker ps -a | grep myrdaemon | awk '{print $1}' | xargs docker rm
 
-docker run -d  --name myrdaemon -v "$PWD":/tmp/rstage -w /tmp/rstage --privileged=true yyuzhong/r-base:latest tail -f /dev/null
+docker run -d  --name myrdaemon -v "$PWD":/tmp/rstage -w /tmp/rstage --privileged=true $myrimage tail -f /dev/null
 
 docker exec -it myrdaemon Rscript $1 "${@:2}" 
 
+cd $SAVEDIR

@@ -24,4 +24,6 @@ docker build -f "rimage/Dockerfile" -t $imagename .
 docker login -u $2 -p $3 -e $4
 docker push "$imagename"
 
+sed -i "s#^myrimage=.*#myrimage=$imagename#g" ./rimage.ini
+
 cd $SAVEDIR
