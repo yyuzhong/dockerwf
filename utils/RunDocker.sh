@@ -23,8 +23,12 @@ fi
 
 WORKDIR=$( cd $(dirname $0) ; pwd -P)
 
-NEW_UUID=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-myrwidget=$(echo $NEW_UUID | cut -c 1-8)
+#NEW_UUID=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+#myrwidget=$(echo $NEW_UUID | cut -c 1-8)
+tmp=$RANDOM
+RAND1=$((tmp%10000))
+myrwidget=$( printf 'mycon%04d' $RAND1)
+
 echo $myrwidget
 
 #docker ps -a | grep myrwidget | awk '{print $1}' | xargs docker stop
