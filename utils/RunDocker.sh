@@ -23,11 +23,17 @@ fi
 
 WORKDIR=$( cd $(dirname $0) ; pwd -P)
 
-docker ps -a | grep myrwidget | awk '{print $1}' | xargs docker stop
-docker ps -a | grep myrwidget | awk '{print $1}' | xargs docker rm
+NEW_UUID=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+myrwidget=$(echo $NEW_UUID | cut -c 1-8)
+echo $myrwidget
+
+#docker ps -a | grep myrwidget | awk '{print $1}' | xargs docker stop
+#docker ps -a | grep myrwidget | awk '{print $1}' | xargs docker rm
 
 myscript="$scriptdir$myapp"
 
-docker run --name myrwidget -v $mydir:$workspace -w $workspace --privileged=true "$myimage" Rscript $myscript $myargs
+docker run --name $myrwidget -v $mydir:$workspace -w $workspace --privileged=true "$myimage" Rscript $myscript $myargs
 
+docker ps -a | grep $myrwidget | awk '{print $1}' | xargs docker stop
+docker ps -a | grep $myrwidget | awk '{print $1}' | xargs docker rm
 
