@@ -11,6 +11,7 @@ myapp=$3;   # test.R
 myargs=${@:4};    # -i rdata/x.data -o output.data -p 100
 workspace="/tmp/rstage/"
 scriptdir="/home/workspace/rscript/"
+execdir="/home/workspace/exec/"
 
 subname=`echo $myimage| cut -d':' -f 1` #find the main name yyuzhong/xxxx
 
@@ -34,9 +35,19 @@ echo $myrwidget
 #docker ps -a | grep myrwidget | awk '{print $1}' | xargs docker stop
 #docker ps -a | grep myrwidget | awk '{print $1}' | xargs docker rm
 
-myscript="$scriptdir$myapp"
 
-docker run --name $myrwidget -v $mydir:$workspace -w $workspace --privileged=true "$myimage" Rscript $myscript $myargs
+ext=$(echo "${myapp#*.}")
+
+EXT=${ext^^}
+
+if [ "$EXT" == "R" ]
+then 
+    myscript="$scriptdir$myapp"
+    docker run --name $myrwidget -v $mydir:$workspace -w $workspace --privileged=true "$myimage" Rscript $myscript $myargs
+else
+    myscript="$execdir$myapp"
+    docker run --name $myrwidget -v $mydir:$workspace -w $workspace --privileged=true "$myimage" $myscript $myargs
+fi
 
 docker ps -a | grep $myrwidget | awk '{print $1}' | xargs docker stop
 docker ps -a | grep $myrwidget | awk '{print $1}' | xargs docker rm

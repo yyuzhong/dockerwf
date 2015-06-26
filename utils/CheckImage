@@ -1,0 +1,21 @@
+#/bin/bash
+
+myrimage=$1
+
+subname=`echo $myrimage| cut -d':' -f 1` #find the main name yyuzhong/xxxx
+echo $myrimage
+echo $subname
+if docker images | grep "$subname" > /dev/null
+then
+    echo "Image already exists"
+else
+    docker pull $myrimage
+fi
+
+docker run -d  --name myrtest --privileged=true $myrimage tail -f /dev/null
+
+docker exec -it myrtest bash
+
+docker ps -a | grep myrtest | awk '{print $1}' | xargs docker stop
+docker ps -a | grep myrtest | awk '{print $1}' | xargs docker rm
+

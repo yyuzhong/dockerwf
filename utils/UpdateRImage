@@ -1,5 +1,11 @@
 #/bin/bash
 
+
+SAVEDIR=$PWD
+
+WORKDIR=$( cd $(dirname $0) ; pwd -P)
+cd $WORKDIR
+
 . ./rimage.ini
 
 imagename=$myrimage
@@ -13,3 +19,4 @@ echo $imagename
 
 docker pull $imagename
 
+cd $SAVEDIR

@@ -22,8 +22,19 @@ fi
 docker ps -a | grep myrdaemon | awk '{print $1}' | xargs docker stop
 docker ps -a | grep myrdaemon | awk '{print $1}' | xargs docker rm
 
-docker run -d  --name myrdaemon -v "$PWD":/tmp/rstage -w /tmp/rstage --privileged=true $myrimage tail -f /dev/null
+docker run -d  --name myrdaemon -v "$SAVEDIR":/tmp/rstage -w /tmp/rstage --privileged=true $myrimage tail -f /dev/null
 
-docker exec -it myrdaemon Rscript $1 "${@:2}" 
+myapp=$1
+
+ext=$(echo "${myapp#*.}")
+
+EXT=${ext^^}
+
+if [ "$EXT" == "R" ]
+then 
+    docker exec -it myrdaemon Rscript $1 "${@:2}" 
+else
+    docker exec -it myrdaemon $1 "${@:2}" 
+fi
 
 cd $SAVEDIR
